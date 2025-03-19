@@ -28,44 +28,43 @@ int main(void) {
 }
 
 char* longestPalindrome(char* string) {
-    int i, j, uzunluk;
+    int uzunluk = 0, big = 0, start = 0, end = 0;
     char *result;
-    
+
+    // String uzunluğunu hesapla
+    while (*(string + uzunluk) != '\0') uzunluk++;
+
+    for (int i = 0; i < uzunluk; i++) {
+        // Tek karakter merkezli palindromlar için
+        int j = 0;
+        while (i - j >= 0 && i + j < uzunluk && *(string + i - j) == *(string + i + j)) j++;
+
+        if (big < (j - 1) * 2 + 1) {
+            big = (j - 1) * 2 + 1;
+            start = i - (j - 1);
+            end = i + (j - 1);
+        }
+
+        // Çift merkezli palindromlar için
+        j = 0;
+        while (i - j >= 0 && i + j + 1 < uzunluk && *(string + i - j) == *(string + i + j + 1)) j++;
+
+        if (big < j * 2) {
+            big = j * 2;
+            start = i - (j - 1);
+            end = i + j;
+        }
+    }
+
+    // Bellek ayırma
+    result = (char*)malloc(sizeof(char) * (end - start + 2)); 
+
+    // Sonucu kopyalama
+    int k = 0;
+    for (int i = start; i <= end; i++) {
+        result[k++] = string[i];
+    }
+    result[k] = '\0';
+
     return result;
 }
-
-
-// char* longestPalindrome(char* string) {
-//     int start, end, big = 0;
-//     char *result;
-//     int i, j, uzunluk = 0;
-
-//     result = (char*)malloc(sizeof(char) * 1000);
-
-//     while(*(string+uzunluk) != '\0') uzunluk++;
-
-//     for (i = 0; i < uzunluk; i++) {
-//         j = 1;
-
-//         while (*(string + i + j) == *(string + i - j) && i + j < uzunluk && i - j >=0) {
-//             j++;
-//         }
-
-//         if ( j > big ) {
-
-//             big = j;
-//             j--;
-//             start = i - j;
-//             end = i + j;     
-//         }
-//     }
-//     j = 0;
-//     for (i = start; i <= end; i++) {
-
-//         *(result + j++)= *(string + i);
-        
-//     }
-    
-//     return result;
-// }
-// 'a','b','c','b','g','\0'
