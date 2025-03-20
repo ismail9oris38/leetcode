@@ -13,8 +13,8 @@ And then read line by line: **"PAHNAPLSIIGYIR"**
 
 Write the code that will take a string and make this conversion given a number of rows:
 
-```cpp
-string convert(string s, int numRows);
+```c
+char* convert(char *string, int numRows);
 ```
 
 ## Examples
