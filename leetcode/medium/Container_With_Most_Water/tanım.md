@@ -16,8 +16,6 @@ Verilen dizi içindeki **herhangi iki çizgiyi seçerek** oluşturulabilecek **m
 ---
 
 ## **Örnekler**
-
-### **Örnek 1**
 ```txt
 Input: height = [1,8,6,2,5,4,8,3,7]
 Output: 49
@@ -32,11 +30,11 @@ Açıklama:
 İki çizgi arasındaki mesafe 1 birimdir ve yükseklikleri 1 olduğundan,
 maksimum alan:1 × 1 = 1
 
-Kısıtlamalar
+## **Kısıtlamalar**
 	•	n (height dizisinin uzunluğu) en az 2 ve en fazla 100.000 olabilir.
 	•	Yükseklik değerleri 0 ile 10⁴ arasında olabilir.
 
-Çözüm Yöntemi
+## **Çözüm Yöntemi**
 
 Bu problem için brute force (O(n²)) yaklaşımı zaman aşımı hatası verir.
 Bunun yerine, çift yönlü iki pointer (Two Pointer Approach – O(n)) kullanarak verimli bir çözüm geliştirilmelidir.
