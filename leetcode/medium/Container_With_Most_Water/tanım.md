@@ -30,7 +30,7 @@ Açıklama:
 İki çizgi arasındaki mesafe 1 birimdir ve yükseklikleri 1 olduğundan,
 maksimum alan:1 × 1 = 1
 
-**Kısıtlamalar**
+## **Kısıtlamalar**
 	•	n (height dizisinin uzunluğu) en az 2 ve en fazla 100.000 olabilir.
 	•	Yükseklik değerleri 0 ile 10⁴ arasında olabilir.
 
