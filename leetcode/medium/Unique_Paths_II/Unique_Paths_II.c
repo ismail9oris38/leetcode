@@ -18,7 +18,7 @@ int main() {
     int data[4][4] = {
         {0, 0, 0, 1},
         {0, 1, 0, 0},
-        {0, 1, 0, 1},
+        {0, 0, 0, 1},
         {0, 0, 0, 0}
     };
 
@@ -43,81 +43,47 @@ int main() {
 
 // Engellerle dolu bir grid içinde benzersiz yolları bulan fonksiyon
 int uniquePathsWithObstacles(int** obstacleGrid, int obstacleGridSize, int* obstacleGridColSize) {
-    int i, j, line = 1, tmp = 1, result = 0, tmp2 = 0;
-    int **lines; // Yolları takip eden diziyi oluştur
-
-    // İlk adımı başlatmak için 1 satırlık bellek ayır
-    lines = (int**)malloc(sizeof(int*) * line);
-    for (i = 0; i < line; i++) {
-        lines[i] = (int*)malloc(sizeof(int) * 2);
+    int i, j;
+    
+    // DP tablosu
+    int **dp = (int**)malloc(obstacleGridSize * sizeof(int*));
+    for (i = 0; i < obstacleGridSize; i++) {
+        dp[i] = (int*)malloc(obstacleGridColSize[i] * sizeof(int));
     }
 
-    // Başlangıç noktasını (0,0) olarak ayarla
-    lines[0][0] = 0;
-    lines[0][1] = 0;
+    // Eğer başlangıç noktası engelse, hiç yol yok
+    if (obstacleGrid[0][0] == 1) return 0;
+    
+    // İlk hücreye 1 koy
+    dp[0][0] = 1;
 
-    // Eğer başlangıç noktası engelli ise, 0 dönüş yap (hiçbir yol yok)
-    if (obstacleGrid[0][0] == 1) {
-        return 0;
+    // İlk satırı doldur
+    for (j = 1; j < obstacleGridColSize[0]; j++) {
+        if (obstacleGrid[0][j] == 1) dp[0][j] = 0;  // Engel varsa 0
+        else dp[0][j] = dp[0][j - 1]; // Soldan gelen yol
     }
 
-    // Tüm yolları keşfetmek için döngü başlat
-    while (tmp) {
-        tmp = 0; // Hareket olup olmadığını kontrol etmek için flag
+    // İlk sütunu doldur
+    for (i = 1; i < obstacleGridSize; i++) {
+        if (obstacleGrid[i][0] == 1) dp[i][0] = 0;  // Engel varsa 0
+        else dp[i][0] = dp[i - 1][0]; // Yukarıdan gelen yol
+    }
 
-        for (i = 0; i < line; i++) {
-            tmp2 = 0; // Yana hareket ettik mi kontrolü
-
-            // Sağ tarafa hareket kontrolü
-            if (lines[i][1] + 1 < *obstacleGridColSize && obstacleGrid[lines[i][0]][lines[i][1] + 1] == 0) {
-                lines[i][1] += 1; // Yana git
-                tmp = 1; // Hareket yapıldı
-                tmp2 = 1;
-            }
-
-            // Aşağı hareket kontrolü (eğer sağa gidildiyse yeni satır ekleyerek kontrol)
-            if (lines[i][0] + 1 < obstacleGridSize && obstacleGrid[lines[i][0] + 1][lines[i][1] - tmp2] == 0) {
-                if (tmp2) {
-                    // Yeni yol keşfedildi, yeni satır ekleyerek yolu genişlet
-                    line++;
-                    int **temp = (int**)realloc(lines, sizeof(int*) * line);
-                    if (temp != NULL) {
-                        lines = temp;
-                    } else {
-                        printf("Hafıza atama hatası.\n");
-                        return -1;
-                    }
-                    
-                    // Yeni yolu kaydet
-                    lines[line - 1] = (int*)malloc(sizeof(int) * 2);
-                    if (lines[line - 1] == NULL) {
-                        printf("Hafıza atama hatası.\n");
-                        return -1;
-                    }
-                    lines[line - 1][0] = lines[i][0] + 1;
-                    lines[line - 1][1] = lines[i][1] - 1;
-                } else {
-                    lines[i][0] += 1; // Direkt aşağı in
-                    tmp = 1;
-                }
-            }
-        }
-
-        // Eğer hareket edilemiyorsa, yolları kontrol et ve hedefe ulaşıldı mı bak
-        if (!tmp) {
-            for (i = 0; i < line; i++) {
-                if (lines[i][0] == obstacleGridSize - 1 && lines[i][1] == *obstacleGridColSize - 1) {
-                    result++; // Hedefe ulaşıldı, sonucu arttır
-                }
-            }
+    // DP tablosunu doldur
+    for (i = 1; i < obstacleGridSize; i++) {
+        for (j = 1; j < obstacleGridColSize[i]; j++) {
+            if (obstacleGrid[i][j] == 1) dp[i][j] = 0;  // Engel varsa 0
+            else dp[i][j] = dp[i - 1][j] + dp[i][j - 1]; // Yukarıdan ve soldan gelen yolları topla
         }
     }
 
-    // Belleği serbest bırak
-    for (i = 0; i < line; i++) {
-        free(lines[i]);
+    int result = dp[obstacleGridSize - 1][obstacleGridColSize[0] - 1];
+
+    // Belleği temizle
+    for (i = 0; i < obstacleGridSize; i++) {
+        free(dp[i]);
     }
-    free(lines);
+    free(dp);
 
     return result;
 }
