@@ -1,81 +1,71 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
 
-// Sayıyı Roma rakamlarına çeviren fonksiyon
-char* intToRoman(int num);
+char* intToRoman(int num); // Roma rakamına dönüştürme fonksiyonu prototipi
 
 int main(void) {
     int num;
     char *result;
 
-    // Kullanıcıdan sayı girişi al
-    printf("Sayıyı giriniz: ");
-    scanf("%d", &num);
+    printf("sayıyı giriniz: "); // Kullanıcıdan sayı girişi isteme
+    scanf("%d",&num);
 
-    // Sayıyı Roma rakamlarına çevir
-    result = intToRoman(num);
+    result = intToRoman(num); // Sayıyı Roma rakamına çevirme
 
-    // Sonucu ekrana yazdır
-    printf("\nSayının Roma rakamlarıyla gösterimi:\n %s\n", result);
+    printf("\nsayının roman harfleriyle gösterimi:\n %s", result);
 
-    // Belleği serbest bırak
-    free(result);
+    free(result); // Dinamik olarak ayrılan belleği serbest bırakma
 
     return 0;
 }
 
 char* intToRoman(int num) {
-    int i, tmp, harf = 0, basamak = 0;
-    
-    // Çıktıyı saklamak için yeterli bellek ayır
-    char *result = (char*)malloc(sizeof(char) * 20);
-    if (!result) {
-        printf("Bellek tahsisi başarısız!\n");
-        exit(1);
-    }
+    int i, tmp, harf = 0, diget = 0;
+    char *result;
+    char harfler[7] = {'I', 'V', 'X', 'L', 'C', 'D', 'M'}; // Roma rakamı sembolleri
 
-    // Roma rakamları için karakter dizileri
-    char birler[] = {'I', 'X', 'C', 'M'}; // 1, 10, 100, 1000
-    char besler[] = {'V', 'L', 'D'};      // 5, 50, 500
+    // Roma rakamı için yeterli bellek ayırma (max 20 karakter)
+    result = (char*)malloc(sizeof(char) * 20);
 
-    // Sayıyı basamak basamak işle
     while (num > 0) {
-        tmp = num % 10; // Son basamağı al
-
+        tmp = num % 10; // Sayının son basamağını al
+        
+        // 1-3 arası sayılar için (I, II, III gibi)
         if (tmp < 4) {
-            // 1, 2, 3 için (I, II, III gibi)
-            for (i = 0; i < tmp; i++) {
-                result[harf++] = birler[basamak];
+            for(i = 0; i < tmp; i++) {
+                result[harf++] = harfler[diget];
             }
-        } else if (tmp == 4) {
-            // 4 için (IV, XL, CD gibi)
-            result[harf++] = besler[basamak];
-            result[harf++] = birler[basamak];
-        } else if (tmp < 9) {
-            // 5, 6, 7, 8 için (V, VI, VII, VIII gibi)
-            for (i = 0; i < tmp - 5; i++) {
-                result[harf++] = birler[basamak];
-            }
-            result[harf++] = besler[basamak];
-        } else { // tmp == 9
-            // 9 için (IX, XC, CM gibi)
-            result[harf++] = birler[basamak + 1];
-            result[harf++] = birler[basamak];
         }
-
-        basamak++;  // Basamak seviyesini artır
-        num /= 10;  // Bir sonraki basamağa geç
+        // 4 için (IV gibi)
+        else if (tmp == 4) {
+            result[harf++] = harfler[diget + 1];
+            result[harf++] = harfler[diget];
+        }
+        // 5-8 arası sayılar için (V, VI, VII, VIII gibi)
+        else if (tmp < 9 && tmp > 4) {
+            for(i = 0; i < tmp - 5; i++) {
+                result[harf++] = harfler[diget];
+            }
+            result[harf++] = harfler[diget + 1];
+        }
+        // 9 için (IX gibi)
+        else if (tmp == 9) {
+            result[harf++] = harfler[diget + 2];
+            result[harf++] = harfler[diget];
+        }
+        
+        diget += 2; // Bir sonraki basamak için sembol indeksini güncelle
+        num /= 10; // Bir sonraki basamağa geç
     }
+    
+    result[harf] = '\0'; // String sonuna null karakter ekle
 
-    // String'in sonuna null karakter ekleyerek güvenli hale getir
-    result[harf] = '\0';
-
-    // Roma rakamlarını ters çevir (doğru sırayla yazdırmak için)
-    for (i = 0; i < harf / 2; i++) {
+    // Rakamlar ters sırada eklendiği için stringi ters çevir
+    for(i = 0; i < harf/2; i++) {
         tmp = result[i];
         result[i] = result[harf - 1 - i];
         result[harf - 1 - i] = tmp;
     }
-
-    return result; // Çevrilen sonucu döndür
+    
+    return result;
 }
